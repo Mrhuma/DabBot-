@@ -1,6 +1,16 @@
 [
   {
-    "text": "dab",
+    "text": {
+      "Pattern": "dab",
+      "Options": "IgnoreCase"
+    },
+    "mediaCount": 1
+  },
+  {
+    "text": {
+      "Pattern": "she+sh",
+      "Options": "IgnoreCase"
+    },
     "mediaCount": 1
   }
 ]

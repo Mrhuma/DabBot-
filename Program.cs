@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -57,9 +58,10 @@ namespace DabBot_
             }
             else
             {
-                //If the file doesn't exist, create and populate with some data
+                //If the file doesn't exist, create and populate with some sample data
                 File.Create(path).Close();
-                phrases.Add(new Phrase("dab", 1));
+                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), 1));
+                phrases.Add(new Phrase(new Regex("she+sh", RegexOptions.IgnoreCase), 1));
                 SerializePhrases(phrases);
             }
 
