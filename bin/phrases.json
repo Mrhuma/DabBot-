@@ -1,16 +1,18 @@
 [
   {
-    "text": {
+    "regex": {
       "Pattern": "dab",
       "Options": "IgnoreCase"
     },
-    "mediaCount": 1
+    "mediaCount": 1,
+    "folderName": "dab"
   },
   {
-    "text": {
+    "regex": {
       "Pattern": "she+sh",
       "Options": "IgnoreCase"
     },
-    "mediaCount": 1
+    "mediaCount": 1,
+    "folderName": "sheesh"
   }
 ]

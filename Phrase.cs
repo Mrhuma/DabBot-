@@ -9,16 +9,19 @@ namespace DabBot_
 {
     class Phrase
     {
-        private Regex _text;
+        private Regex _regex;
         private int _mediaCount;
+        private string _folderName;
 
-        public Regex text { get { return _text; } set { _text = value; } }
+        public Regex regex { get { return _regex; } set { _regex = value; } }
         public int mediaCount { get { return _mediaCount; } set { _mediaCount = value; } }
+        public string folderName { get { return _folderName; } set { _folderName = value; } }
 
-        public Phrase(Regex text, int mediaCount)
+        public Phrase(Regex regex, int mediaCount, string folderName)
         {
-            this.text = text;
+            this.regex = regex;
             this.mediaCount = mediaCount;
+            this.folderName = folderName;
         }
     }
 }

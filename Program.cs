@@ -22,25 +22,43 @@ namespace DabBot_
 
         public async Task MainAsync()
         {
+            //Create client
             _client = new DiscordSocketClient();
-
-            _client.Log += Log;
-
 #if DEBUG
+            //Fetch token and the phrases file path
             string token = File.ReadAllText(@"..\token.txt");
             path = @"..\phrases.json";
 #else
             string token = File.ReadAllText("token.txt");
             path = "phrases.json";
 #endif
-
+            //Login and start the bot
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
+            //Listen to event
             _client.Ready += Ready;
+            _client.Log += Log;
+            _client.MessageReceived += MessageReceived;
 
             //Block this task until the program is closed.
             await Task.Delay(-1);
+        }
+
+        private Task MessageReceived(SocketMessage msg)
+        {
+            //Check the message for any known phrases
+            foreach(Phrase phrase in phrases)
+            {
+                //If a match is found
+                if(phrase.regex.IsMatch(msg.CleanContent))
+                {
+                    //TODO
+                    Console.WriteLine(phrase.folderName);
+                }
+            }
+            
+            return Task.CompletedTask;
         }
 
         private Task Log(LogMessage msg)
@@ -60,14 +78,15 @@ namespace DabBot_
             {
                 //If the file doesn't exist, create and populate with some sample data
                 File.Create(path).Close();
-                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), 1));
-                phrases.Add(new Phrase(new Regex("she+sh", RegexOptions.IgnoreCase), 1));
+                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), 1, "dab"));
+                phrases.Add(new Phrase(new Regex("she+sh", RegexOptions.IgnoreCase), 1, "sheesh"));
                 SerializePhrases(phrases);
             }
 
+            //Displays each phrase and how many images are stored for the phrase
             foreach(Phrase phrase in phrases)
             {
-                Console.WriteLine("Listening to " + phrase.text + " with " + phrase.mediaCount + " images.");
+                Console.WriteLine("Listening to " + phrase.regex + " with " + phrase.mediaCount + " images.");
             }
                 return Task.CompletedTask;
         }
