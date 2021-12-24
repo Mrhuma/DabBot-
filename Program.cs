@@ -16,7 +16,7 @@ namespace DabBot_
     {
         private DiscordSocketClient _client;
         private List<Phrase> phrases = new List<Phrase>();
-        private string path;
+        private string pathPrefix = "";
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
@@ -27,10 +27,9 @@ namespace DabBot_
 #if DEBUG
             //Fetch token and the phrases file path
             string token = File.ReadAllText(@"..\token.txt");
-            path = @"..\phrases.json";
+            pathPrefix = @"..\";
 #else
             string token = File.ReadAllText("token.txt");
-            path = "phrases.json";
 #endif
             //Login and start the bot
             await _client.LoginAsync(TokenType.Bot, token);
@@ -53,8 +52,15 @@ namespace DabBot_
                 //If a match is found
                 if(phrase.regex.IsMatch(msg.CleanContent))
                 {
-                    //TODO
-                    Console.WriteLine(phrase.folderName);
+                    //Randomly select a number corresponding to a file in the list
+                    int random = new Random().Next(1, phrase.mediaCount);
+
+                    Embed embed = new EmbedBuilder
+                    {
+                        ImageUrl = $"http://mrhumagames.com/DabBot/{phrase.folderName}/{random}.png"
+                    }.Build();
+
+                    msg.Channel.SendMessageAsync("", embed: embed);
                 }
             }
             
@@ -70,16 +76,16 @@ namespace DabBot_
         private Task Ready()
         {
             //Read from the existing file if it exists
-            if (File.Exists(path))
+            if (File.Exists(pathPrefix + "phrases.json"))
             {
                 phrases = DeserializePhrases();
             }
             else
             {
                 //If the file doesn't exist, create and populate with some sample data
-                File.Create(path).Close();
+                File.Create(pathPrefix + "phrases.json").Close();
                 phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), 1, "dab"));
-                phrases.Add(new Phrase(new Regex("she+sh", RegexOptions.IgnoreCase), 1, "sheesh"));
+                phrases.Add(new Phrase(new Regex("shee+sh", RegexOptions.IgnoreCase), 1, "sheesh"));
                 SerializePhrases(phrases);
             }
 
@@ -94,13 +100,13 @@ namespace DabBot_
         //Write phrases to json file
         private void SerializePhrases(List<Phrase> phrases)
         {
-            File.WriteAllText(path, JsonConvert.SerializeObject(phrases, Formatting.Indented, new Newtonsoft.Json.Converters.StringEnumConverter()));
+            File.WriteAllText(pathPrefix + "phrases.json", JsonConvert.SerializeObject(phrases, Formatting.Indented, new Newtonsoft.Json.Converters.StringEnumConverter()));
         }
 
         //Read phrases from json file
         private List<Phrase> DeserializePhrases()
         {
-            return JsonConvert.DeserializeObject<List<Phrase>>(File.ReadAllText(path), new Newtonsoft.Json.Converters.StringEnumConverter());
+            return JsonConvert.DeserializeObject<List<Phrase>>(File.ReadAllText(pathPrefix + "phrases.json"), new Newtonsoft.Json.Converters.StringEnumConverter());
         }
     }
 }

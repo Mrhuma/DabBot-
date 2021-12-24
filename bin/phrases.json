@@ -4,15 +4,15 @@
       "Pattern": "dab",
       "Options": "IgnoreCase"
     },
-    "mediaCount": 1,
+    "mediaCount": 6,
     "folderName": "dab"
   },
   {
     "regex": {
-      "Pattern": "she+sh",
+      "Pattern": "shee+sh",
       "Options": "IgnoreCase"
     },
-    "mediaCount": 1,
+    "mediaCount": 5,
     "folderName": "sheesh"
   }
 ]
