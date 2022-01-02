@@ -44,3 +44,7 @@ G:\Repos\DabBot+\obj\Debug\DabBot+.csproj.CoreCompileInputs.cache
 G:\Repos\DabBot+\obj\Debug\DabBot+.csproj.CopyComplete
 G:\Repos\DabBot+\obj\Debug\DabBot+.exe
 G:\Repos\DabBot+\obj\Debug\DabBot+.pdb
+G:\Repos\DabBot+\bin\Debug\DabBot+.exe.manifest
+G:\Repos\DabBot+\bin\Debug\DabBot+.application
+G:\Repos\DabBot+\obj\Debug\DabBot+.exe.manifest
+G:\Repos\DabBot+\obj\Debug\DabBot+.application

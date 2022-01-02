@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
-using Newtonsoft.Json;
 
 namespace DabBot_
 {
     class Program
     {
         private DiscordSocketClient _client;
-        private List<Phrase> phrases = new List<Phrase>();
-        private string pathPrefix = "";
+        public static List<Phrase> phrases = new List<Phrase>();
+        public static string pathPrefix = "";
 
         public static Task Main(string[] args) => new Program().MainAsync();
 
@@ -24,14 +21,13 @@ namespace DabBot_
         {
             //Create client
             _client = new DiscordSocketClient();
+
 #if DEBUG
-            //Fetch token and the phrases file path
-            string token = File.ReadAllText(@"..\token.txt");
             pathPrefix = @"..\";
-#else
-            string token = File.ReadAllText("token.txt");
 #endif
+
             //Login and start the bot
+            string token = File.ReadAllText(pathPrefix + "token.txt");
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
 
@@ -40,30 +36,36 @@ namespace DabBot_
             _client.Log += Log;
             _client.MessageReceived += MessageReceived;
 
+            CommandHandler commandHandler = new CommandHandler(_client, new CommandService());
+            await commandHandler.InstallCommandsAsync();
+
             //Block this task until the program is closed.
             await Task.Delay(-1);
         }
 
         private Task MessageReceived(SocketMessage msg)
         {
-            //Check the message for any known phrases
-            foreach(Phrase phrase in phrases)
+            //Ensure that no bot can trigger a response
+            if (!msg.Author.IsBot)
             {
-                //If a match is found
-                if(phrase.regex.IsMatch(msg.CleanContent))
+                //Check the message for any known phrases
+                foreach (Phrase phrase in phrases)
                 {
-                    //Randomly select a number corresponding to a file in the list
-                    int random = new Random().Next(1, phrase.mediaCount);
-
-                    Embed embed = new EmbedBuilder
+                    //If a match is found
+                    if (phrase.regex.IsMatch(msg.CleanContent))
                     {
-                        ImageUrl = $"http://mrhumagames.com/DabBot/{phrase.folderName}/{random}.png"
-                    }.Build();
+                        //Randomly select a number corresponding to a file in the list
+                        int random = new Random().Next(1, phrase.links.Count);
 
-                    msg.Channel.SendMessageAsync("", embed: embed);
+                        Embed embed = new EmbedBuilder
+                        {
+                            ImageUrl = phrase.links[random]
+                        }.Build();
+
+                        msg.Channel.SendMessageAsync("", embed: embed);
+                    }
                 }
             }
-            
             return Task.CompletedTask;
         }
 
@@ -78,35 +80,43 @@ namespace DabBot_
             //Read from the existing file if it exists
             if (File.Exists(pathPrefix + "phrases.json"))
             {
-                phrases = DeserializePhrases();
+                phrases = JsonHelper.DeserializePhrases(pathPrefix);
             }
             else
             {
                 //If the file doesn't exist, create and populate with some sample data
                 File.Create(pathPrefix + "phrases.json").Close();
-                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), 1, "dab"));
-                phrases.Add(new Phrase(new Regex("shee+sh", RegexOptions.IgnoreCase), 1, "sheesh"));
-                SerializePhrases(phrases);
+                List<string> dabLinks = new List<string>()
+                {
+                    "http://mrhumagames.com/DabBot/dab/unicorn.png",
+                    "http://mrhumagames.com/DabBot/dab/panda.png",
+                    "http://mrhumagames.com/DabBot/dab/pepe.png",
+                    "http://mrhumagames.com/DabBot/dab/roblox.png",
+                    "http://mrhumagames.com/DabBot/dab/cat.png",
+                    "http://mrhumagames.com/DabBot/dab/dog.png",
+
+                };
+                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), dabLinks));
+
+                List<string> sheeshLinks = new List<string>()
+                {
+                    "http://mrhumagames.com/DabBot/sheesh/1.png",
+                    "http://mrhumagames.com/DabBot/sheesh/2.png",
+                    "http://mrhumagames.com/DabBot/sheesh/3.png",
+                    "http://mrhumagames.com/DabBot/sheesh/4.png",
+                    "http://mrhumagames.com/DabBot/sheesh/5.png",
+
+                };
+                phrases.Add(new Phrase(new Regex("shee+sh", RegexOptions.IgnoreCase), sheeshLinks));
+                JsonHelper.SerializePhrases(phrases, pathPrefix);
             }
 
             //Displays each phrase and how many images are stored for the phrase
             foreach(Phrase phrase in phrases)
             {
-                Console.WriteLine("Listening to " + phrase.regex + " with " + phrase.mediaCount + " images.");
+                Console.WriteLine("Listening to " + phrase.regex + " with " + phrase.links.Count + " links.");
             }
-                return Task.CompletedTask;
-        }
-
-        //Write phrases to json file
-        private void SerializePhrases(List<Phrase> phrases)
-        {
-            File.WriteAllText(pathPrefix + "phrases.json", JsonConvert.SerializeObject(phrases, Formatting.Indented, new Newtonsoft.Json.Converters.StringEnumConverter()));
-        }
-
-        //Read phrases from json file
-        private List<Phrase> DeserializePhrases()
-        {
-            return JsonConvert.DeserializeObject<List<Phrase>>(File.ReadAllText(pathPrefix + "phrases.json"), new Newtonsoft.Json.Converters.StringEnumConverter());
+            return Task.CompletedTask;
         }
     }
 }
