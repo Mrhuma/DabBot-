@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DabBot_
 {
-    class Phrase
+    public class Phrase
     {
         private Regex _regex;
         private List<string> _links;

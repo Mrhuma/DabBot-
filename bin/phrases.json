@@ -25,5 +25,15 @@
       "http://mrhumagames.com/DabBot/sheesh/4.png",
       "http://mrhumagames.com/DabBot/sheesh/5.png"
     ]
+  },
+  {
+    "regex": {
+      "Pattern": "cock",
+      "Options": "IgnoreCase"
+    },
+    "links": [
+      "http://mrhumagames.com/DabBot/sheesh/1.png",
+      "http://mrhumagames.com/DabBot/sheesh/2.png"
+    ]
   }
 ]

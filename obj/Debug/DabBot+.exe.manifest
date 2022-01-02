@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DabBot+.exe" size="11240">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="DabBot+.exe" size="15336">
       <assemblyIdentity name="DabBot+" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>LE1ZeFujX1Mh1tWN6u2lldDhNLEwPsTu3+jkQrZpeC4=</dsig:DigestValue>
+        <dsig:DigestValue>40T7Li+EBEQwcZUgr+BVC0nAOD+64e1cpodx+nQHwTA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
