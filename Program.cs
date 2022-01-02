@@ -46,21 +46,25 @@ namespace DabBot_
 
         private Task MessageReceived(SocketMessage msg)
         {
-            //Check the message for any known phrases
-            foreach(Phrase phrase in phrases)
+            //Ensure that no bot can trigger a response
+            if (!msg.Author.IsBot)
             {
-                //If a match is found
-                if(phrase.regex.IsMatch(msg.CleanContent))
+                //Check the message for any known phrases
+                foreach (Phrase phrase in phrases)
                 {
-                    //Randomly select a number corresponding to a file in the list
-                    int random = new Random().Next(1, phrase.mediaCount);
-
-                    Embed embed = new EmbedBuilder
+                    //If a match is found
+                    if (phrase.regex.IsMatch(msg.CleanContent))
                     {
-                        ImageUrl = $"http://mrhumagames.com/DabBot/{phrase.folderName}/{random}.png"
-                    }.Build();
+                        //Randomly select a number corresponding to a file in the list
+                        int random = new Random().Next(1, phrase.links.Count);
 
-                    msg.Channel.SendMessageAsync("", embed: embed);
+                        Embed embed = new EmbedBuilder
+                        {
+                            ImageUrl = phrase.links[random]
+                        }.Build();
+
+                        msg.Channel.SendMessageAsync("", embed: embed);
+                    }
                 }
             }
             
@@ -84,15 +88,35 @@ namespace DabBot_
             {
                 //If the file doesn't exist, create and populate with some sample data
                 File.Create(pathPrefix + "phrases.json").Close();
-                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), 1, "dab"));
-                phrases.Add(new Phrase(new Regex("shee+sh", RegexOptions.IgnoreCase), 1, "sheesh"));
+                List<string> dabLinks = new List<string>()
+                {
+                    "http://mrhumagames.com/DabBot/dab/unicorn.png",
+                    "http://mrhumagames.com/DabBot/dab/panda.png",
+                    "http://mrhumagames.com/DabBot/dab/pepe.png",
+                    "http://mrhumagames.com/DabBot/dab/roblox.png",
+                    "http://mrhumagames.com/DabBot/dab/cat.png",
+                    "http://mrhumagames.com/DabBot/dab/dog.png",
+
+                };
+                phrases.Add(new Phrase(new Regex("dab", RegexOptions.IgnoreCase), dabLinks));
+
+                List<string> sheeshLinks = new List<string>()
+                {
+                    "http://mrhumagames.com/DabBot/sheesh/1.png",
+                    "http://mrhumagames.com/DabBot/sheesh/2.png",
+                    "http://mrhumagames.com/DabBot/sheesh/3.png",
+                    "http://mrhumagames.com/DabBot/sheesh/4.png",
+                    "http://mrhumagames.com/DabBot/sheesh/5.png",
+
+                };
+                phrases.Add(new Phrase(new Regex("shee+sh", RegexOptions.IgnoreCase), sheeshLinks));
                 SerializePhrases(phrases);
             }
 
             //Displays each phrase and how many images are stored for the phrase
             foreach(Phrase phrase in phrases)
             {
-                Console.WriteLine("Listening to " + phrase.regex + " with " + phrase.mediaCount + " images.");
+                Console.WriteLine("Listening to " + phrase.regex + " with " + phrase.links.Count + " links.");
             }
                 return Task.CompletedTask;
         }

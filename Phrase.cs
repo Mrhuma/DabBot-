@@ -10,18 +10,15 @@ namespace DabBot_
     class Phrase
     {
         private Regex _regex;
-        private int _mediaCount;
-        private string _folderName;
+        private List<string> _links;
 
         public Regex regex { get { return _regex; } set { _regex = value; } }
-        public int mediaCount { get { return _mediaCount; } set { _mediaCount = value; } }
-        public string folderName { get { return _folderName; } set { _folderName = value; } }
+        public List<string> links { get { return _links; } set { _links = value; } }
 
-        public Phrase(Regex regex, int mediaCount, string folderName)
+        public Phrase(Regex regex, List<string> links)
         {
             this.regex = regex;
-            this.mediaCount = mediaCount;
-            this.folderName = folderName;
+            this.links = links;
         }
     }
 }
