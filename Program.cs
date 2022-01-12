@@ -55,7 +55,7 @@ namespace DabBot_
                     if (phrase.regex.IsMatch(msg.CleanContent))
                     {
                         //Randomly select a number corresponding to a file in the list
-                        int random = new Random().Next(1, phrase.links.Count);
+                        int random = new Random().Next(0, phrase.links.Count);
 
                         Embed embed = new EmbedBuilder
                         {
